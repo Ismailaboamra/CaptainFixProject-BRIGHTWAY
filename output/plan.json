@@ -1,0 +1,59 @@
+{
+  "website": "file:///C:/Users/ismael/Documents/Downloads/ActionChainsEx.Html",
+  "suites": [
+    "Smoke",
+    "Navigation",
+    "Forms"
+  ],
+  "cases": [
+    {
+      "id": "SMK-001",
+      "suite": "Smoke",
+      "steps": [
+        "Open the ActionChains Practice Lab page.",
+        "Click on the 'Click Me' box."
+      ],
+      "expected": "Message box displays '✔ Click action performed!' with success styling.",
+      "priority": "High"
+    },
+    {
+      "id": "SMK-002",
+      "suite": "Smoke",
+      "steps": [
+        "Open the ActionChains Practice Lab page.",
+        "Double click on the 'Double Click Me' box."
+      ],
+      "expected": "Message box displays '✔ Double Click action performed!' with success styling.",
+      "priority": "High"
+    },
+    {
+      "id": "SMK-003",
+      "suite": "Smoke",
+      "steps": [
+        "Open the ActionChains Practice Lab page.",
+        "Right click on the 'Right Click Me' box."
+      ],
+      "expected": "Message box displays '⚠ Right Click action performed!' with warning styling.",
+      "priority": "High"
+    },
+    {
+      "id": "NAV-001",
+      "suite": "Navigation",
+      "steps": [
+        "Open the ActionChains Practice Lab page."
+      ],
+      "expected": "Page loads successfully with title 'ActionChains Practice Lab'.",
+      "priority": "Medium"
+    },
+    {
+      "id": "FRM-001",
+      "suite": "Forms",
+      "steps": [
+        "Open the ActionChains Practice Lab page.",
+        "Type 'Test Input' in the text input field."
+      ],
+      "expected": "Message box displays '✔ Send Keys action performed!' with success styling.",
+      "priority": "Medium"
+    }
+  ]
+}
