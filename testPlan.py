@@ -7,7 +7,7 @@ import time
 
 #from Page_sourse import page_source, llm_suggestions
 
-load_dotenv()  # טוען את הקובץ .env
+load_dotenv(dotenv_path="properties.env")  # טוען את הקובץ .env
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 llm =ChatOpenAI(

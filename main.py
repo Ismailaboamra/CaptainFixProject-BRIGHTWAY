@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from testPlan import process_target_data  # <-- Import the function from test.py
+from testPlan import process_target_data
+from planner import run_planner
 
 app = Flask(__name__)
-app.secret_key = "replace-with-a-secure-random-key"
+app.secret_key = ""
 
 @app.route('/', methods=['GET'])
 def index():
@@ -30,7 +31,7 @@ def submit():
 
     # Call the function from the test.py file, passing the 'target' variable
     process_target_data(target)  # <-- Pass the variable here
-
+    run_planner(target, depth=int(depth), num_tests=int(num_cases), email=email, pm=pm_tool)
     # Success message
     flash(f"✅ Received input: target={target}, depth={depth}, num_cases={num_cases}, email={email}, pm_tool={pm_tool}", "success")
 
