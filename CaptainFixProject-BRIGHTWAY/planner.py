@@ -17,6 +17,7 @@ from langchain.prompts import ChatPromptTemplate
 from testPlan import process_target_data
 import os
 from dotenv import load_dotenv
+from email_utils import send_results_email
 
 
 load_dotenv(".env")
@@ -239,6 +240,8 @@ def run_planner(target: str, num_tests: int = 5, depth: int = 1, email: str = ""
 
     print(f"✅ Test Plan generated successfully for {target}!")
     if email:
+        send_results_email(email, attachments=[json_path, excel_path])
+
         print(f"📧 Results will be sent to: {email}")
     print(f"📋 Project Management tool selected: {pm}")
 

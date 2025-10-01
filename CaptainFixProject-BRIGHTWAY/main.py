@@ -10,6 +10,8 @@ from database import db, User, Result
 from testPlan import process_target_data
 from planner import run_planner
 
+
+
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -102,10 +104,8 @@ def submit():
         return redirect(url_for('index'))
 
     try:
-        # تشغيل process_target_data
         process_target_data(target)
 
-        # تشغيل planner
         file_paths = run_planner(
             target, depth=depth, num_tests=num_cases, email=email, pm=pm_tool
         )
@@ -113,7 +113,6 @@ def submit():
         flash(f"❌ Error generating test plan: {str(e)}", "danger")
         return redirect(url_for('index'))
 
-    # حفظ النتيجة في DB
     new_result = Result(
         user_id=user.id,
         target_url=target,
@@ -146,7 +145,6 @@ def download_file(result_id, file_type):
     if not result:
         abort(404)
 
-    # تأكد إن النتيجة للمستخدم الحالي
     if result.user_id != session.get('user_id'):
         abort(403)
 
