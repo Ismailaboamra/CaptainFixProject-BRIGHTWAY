@@ -1,123 +1,245 @@
+import json
+import os
+import time
+import pandas as pd
+import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from pydantic import BaseModel
+from typing import List
+from langchain_community.chat_models import ChatOpenAI
+
+from langchain_openai import ChatOpenAI
+
+from langchain.prompts import ChatPromptTemplate
+from testPlan import process_target_data
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv(".env")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+
+# -----------------------------
+# Data Schemas
+# -----------------------------
+class TestCase(BaseModel):
+    id: str
+    suite: str
+    steps: List[str]
+    expected: str
+    priority: str
+
+class TestPlan(BaseModel):
+    website: str
+    suites: List[str]
+    cases: List[TestCase]
+
+
+
+
+# -----------------------------
+# Website Sampler using Selenium with user parameters
+# -----------------------------
+def sample_links(url: str, num_tests: int = 5, depth: int = 1) -> List[str]:
+    options = Options()
+    options.headless = True
+    service = Service()
+    driver = webdriver.Chrome(service=service, options=options)
+    visited = set()
+    to_visit = [(url, 0)]
+    links = []
+
+    while to_visit and len(links) < num_tests:
+        current_url, current_depth = to_visit.pop(0)
+        if current_url in visited or current_depth > depth:
+            continue
+        try:
+            driver.get(current_url)
+            time.sleep(2)
+        except Exception:
+            continue
+
+        visited.add(current_url)
+        elements = driver.find_elements(By.TAG_NAME, 'a')
+        for elem in elements:
+            link = elem.get_attribute('href')
+            if link and link.startswith('http') and link not in links:
+                links.append(link)
+                if current_depth + 1 <= depth:
+                    to_visit.append((link, current_depth + 1))
+            if len(links) >= num_tests:
+                break
+
+    driver.quit()
+    return links
+
+# -----------------------------
+# LLM Planner
+# -----------------------------
+def extract_full_html(url: str) -> str:
+    """Extract the entire HTML of the given page."""
+    options = Options()
+    options.headless = True
+    driver = webdriver.Chrome(options=options)
+
+    driver.get(url)
+    time.sleep(2)
+
+    html = driver.page_source
+    driver.quit()
+    return html
+
+
+def generate_testplan(url: str, links: List[str]) -> TestPlan:
+    # Extract the full HTML from the page
+    page_html = extract_full_html(url)
+
+    llm = ChatOpenAI(
+        model="gpt-4o-mini",
+        api_key=OPENAI_API_KEY,
+        temperature=0.2
+    )
+
+    template = ChatPromptTemplate.from_template("""
+        You are an expert QA engineer.  
+        Here is the FULL HTML of the target website:  
+        {page_html}
+
+        Generate a structured test plan in JSON with:
+        - Suites: Smoke, Navigation, Forms
+        - Each test case must include: id, suite, steps, expected, priority.
+        - Only use elements that are actually present in the HTML.
+        - Do NOT invent links, forms, or buttons that are not in the HTML.
+        - Make steps clear and actionable (like clicking buttons, filling inputs).
+        Return only JSON.
+    """)
+
+    prompt = template.format_messages(page_html=page_html)
+    response = llm.invoke(prompt)
+    plan_json = response.content.strip()
+    print("LLM Output:", plan_json)
+
+    if plan_json.startswith("```json"):
+        plan_json = plan_json.replace("```json", "").replace("```", "").strip()
+
+    try:
+        parsed = json.loads(plan_json)
+    except json.JSONDecodeError as e:
+        print("❌ Failed JSON parsing. Raw LLM output:", plan_json)
+        raise ValueError("LLM did not return valid JSON") from e
+
+    cases = []
+
+    # Support both {"testPlan": {...}} and {"suites": {...}}
+    if "testPlan" in parsed:
+        suites_dict = parsed["testPlan"].get("suites", {})
+    else:
+        suites_dict = parsed.get("suites", {})
+
+    for suite_name, suite_cases in suites_dict.items():
+        for c in suite_cases:
+            cases.append(TestCase(**c))
+
+    suites_list = list(suites_dict.keys())
+    return TestPlan(website=url, suites=suites_list, cases=cases)
+
+
+# -----------------------------
+# Save Outputs
+# -----------------------------
+
+def save_testplan(plan: TestPlan, base_path: str = "./output"):
+    # JSON
+    os.makedirs(base_path, exist_ok=True)
+    with open(f"{base_path}/plan.json", "w", encoding="utf-8") as f:
+        json.dump(plan.dict(), f, indent=2, ensure_ascii=False)
+
+    # Excel
+    data = [
+        {
+            "ID": c.id,
+            "Suite": c.suite,
+            "Steps": " | ".join(c.steps),
+            "Expected": c.expected,
+            "Priority": c.priority
+        } for c in plan.cases
+    ]
+    df = pd.DataFrame(data)
+    df.to_excel(f"{base_path}/Plan.xlsx", index=False)
+
+# -----------------------------
+# Runner using existing user parameters
+# -----------------------------
+# def run_planner(target: str, num_tests: int = 5, depth: int = 1, email: str = "", pm: str = "jira"):
+#
+#     process_target_data(target)
+#     # Validate URL
+#     try:
+#         headers = {
+#             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+#         }
+#         resp = requests.get(target, headers=headers, timeout=10)
+#         resp.raise_for_status()
+#     except Exception as e:
+#         print(f"Site not accessible: {e}")
+#         return
+#
+#     links = sample_links(target, num_tests=num_tests, depth=depth)
+#     plan = generate_testplan(target, links)
+#     save_testplan(plan)
+#
+#     print(f"Test Plan generated successfully for {target}!")
+#     if email:
+#         print(f"Results will be sent to: {email}")
+#     print(f"Project Management tool selected: {pm}")
+
+
 import os
 import requests
-from datetime import datetime
-from langchain_community.chat_models import ChatOpenAI  # Updated import to avoid deprecation
-# Other planner-related imports here
+from urllib.parse import urlparse, unquote
 
-# -------------------
-# Jira Setup
-# -------------------
-JIRA_EMAIL = os.getenv("JIRA_EMAIL", "razan.alfeelat@gmail.com")
-JIRA_TOKEN = os.getenv("JIRA_TOKEN", "")
-JIRA_DOMAIN = os.getenv("JIRA_DOMAIN", "razanalfeelat.atlassian.net")
-JIRA_PROJECT_KEY = os.getenv("JIRA_PROJECT_KEY", "CFQA")
+def run_planner(target: str, num_tests: int = 5, depth: int = 1, email: str = "", pm: str = "jira"):
+    process_target_data(target)
 
-def create_jira_issue(summary, description_text, issue_type="Bug"):
-    if not (JIRA_DOMAIN and JIRA_PROJECT_KEY and JIRA_EMAIL and JIRA_TOKEN):
-        print("⚠️ Jira credentials or project key not set.")
-        return None
+    parsed = urlparse(target)
+    if parsed.scheme == "file":
+        # Decode URL-encoded characters and fix Windows path
+        local_path = unquote(parsed.path)
+        if os.name == "nt" and local_path.startswith("/"):
+            local_path = local_path[1:]  # Remove leading slash on Windows
 
-    url = f"https://{JIRA_DOMAIN}/rest/api/3/issue"
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    }
-
-    # Convert description to Atlassian Document Format (ADF)
-    description = {
-        "type": "doc",
-        "version": 1,
-        "content": [
-            {
-                "type": "paragraph",
-                "content": [{"text": description_text, "type": "text"}]
+        if not os.path.exists(local_path):
+            print(f"❌ Local file not accessible: {local_path}")
+            return
+        print(f"📄 Local file validated: {local_path}")
+    elif parsed.scheme in ("http", "https"):
+        try:
+            headers = {
+                "User-Agent": "Mozilla/5.0"
             }
-        ]
-    }
-
-    payload = {
-        "fields": {
-            "project": {"key": JIRA_PROJECT_KEY},
-            "summary": summary,
-            "description": description,
-            "issuetype": {"name": issue_type}
-        }
-    }
-
-    response = requests.post(url, json=payload, headers=headers, auth=(JIRA_EMAIL, JIRA_TOKEN))
-
-    if response.status_code == 201:
-        print(f"✅ Jira issue created: {response.json()['key']}")
-        return response.json()
+            resp = requests.get(target, headers=headers, timeout=10)
+            resp.raise_for_status()
+            print(f"🌐 Website validated: {target}")
+        except Exception as e:
+            print(f"❌ Site not accessible: {e}")
+            return{}
     else:
-        print(f"❌ Failed to create Jira issue: {response.status_code} {response.text}")
-        return None
+        print(f"⚠️ Unsupported URL scheme: {parsed.scheme}")
+        return{}
 
-# -------------------
-# Trello Setup (Optional)
-# -------------------
-TRELLO_KEY = os.getenv("TRELLO_KEY", "")
-TRELLO_TOKEN = os.getenv("TRELLO_TOKEN", "")
-TRELLO_LIST_ID = os.getenv("TRELLO_LIST_ID", "")
+    links = sample_links(target, num_tests=num_tests, depth=depth)
+    plan = generate_testplan(target, links)
+    save_testplan(plan)
+    json_path = "./output/plan.json"
+    excel_path = "./output/Plan.xlsx"
 
-def create_trello_card(name, desc):
-    if not (TRELLO_KEY and TRELLO_TOKEN and TRELLO_LIST_ID):
-        print("⚠️ Trello credentials or list ID not set.")
-        return None
-    url = "https://api.trello.com/1/cards"
-    params = {
-        "key": TRELLO_KEY,
-        "token": TRELLO_TOKEN,
-        "idList": TRELLO_LIST_ID,
-        "name": name,
-        "desc": desc
-    }
-    response = requests.post(url, params=params)
-    if response.status_code == 200:
-        print(f"✅ Trello card created: {response.json()['id']}")
-        return response.json()
-    else:
-        print(f"❌ Failed to create Trello card: {response.status_code} {response.text}")
-        return None
-
-# -------------------
-# Run Planner Function
-# -------------------
-def run_planner(target, depth=2, num_tests=5, email=None, pm=None):
-    """
-    This function runs the Planner:
-    - Generates JSON and Excel files
-    - Sends email
-    - Integrates with Jira/Trello if chosen
-    """
-    print(f"Website validated: {target}")
-
-    # Example: run LangChain LLM (GPT)
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo")  # Can update to GPT-4
-    # Add your site processing or test plan generation logic here
-    # ...
-
-    # Example: generate placeholder files (modify later)
-    json_path = f"./{target.replace('https://','').replace('/','_')}_plan.json"
-    excel_path = f"./{target.replace('https://','').replace('/','_')}_plan.xlsx"
-
-    # Create Jira Issue if PM tool = "Jira"
-    if pm and pm.lower() == "jira":
-        create_jira_issue(
-            summary=f"CaptainFix Test Plan for {target}",
-            description_text=f"Test plan generated for {target} on {datetime.utcnow().isoformat()}",
-            issue_type="Bug"
-        )
-
-    # Create Trello Card if PM tool = "Trello"
-    if pm and pm.lower() == "trello":
-        create_trello_card(
-            name=f"Test Plan: {target}",
-            desc=f"Generated test plan for {target}"
-        )
-
-    # Send email (add your email sending library here)
+    print(f"✅ Test Plan generated successfully for {target}!")
     if email:
-        print(f"Email sent successfully to {email}")
+        print(f"📧 Results will be sent to: {email}")
+    print(f"📋 Project Management tool selected: {pm}")
 
     return {"json": json_path, "excel": excel_path}

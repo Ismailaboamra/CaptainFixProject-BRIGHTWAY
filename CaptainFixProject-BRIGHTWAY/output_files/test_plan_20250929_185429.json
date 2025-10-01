@@ -1,0 +1,241 @@
+{
+  "url": "https://www.ebay.com/",
+  "plan": [
+    {
+      "test_case_number": 1,
+      "description": "# QA Test Plan for eBay Website"
+    },
+    {
+      "test_case_number": 2,
+      "description": "## Test Plan Overview"
+    },
+    {
+      "test_case_number": 3,
+      "description": "This QA test plan outlines the testing strategy for the eBay website (https://www.ebay.com/). The primary goal is to ensure that the website functions correctly across various scenarios, providing a seamless user experience. The test cases cover critical functionalities such as user registration, product search, listing, purchasing, and payment processing."
+    },
+    {
+      "test_case_number": 4,
+      "description": "### Test Environment"
+    },
+    {
+      "test_case_number": 5,
+      "description": "- **URL:** https://www.ebay.com/"
+    },
+    {
+      "test_case_number": 6,
+      "description": "- **Browsers:** Chrome, Firefox, Safari, Edge"
+    },
+    {
+      "test_case_number": 7,
+      "description": "- **Devices:** Desktop, Tablet, Mobile"
+    },
+    {
+      "test_case_number": 8,
+      "description": "- **Test Data:** Valid user credentials, product listings, payment information"
+    },
+    {
+      "test_case_number": 9,
+      "description": "## Test Cases"
+    },
+    {
+      "test_case_number": 10,
+      "description": "### Test Case 1: User Registration"
+    },
+    {
+      "test_case_number": 11,
+      "description": "**Objective:** Verify that a new user can successfully register for an account."
+    },
+    {
+      "test_case_number": 12,
+      "description": "- **Preconditions:** User is on the eBay homepage."
+    },
+    {
+      "test_case_number": 13,
+      "description": "- **Steps:**"
+    },
+    {
+      "test_case_number": 14,
+      "description": "1. Click on the \"Register\" link."
+    },
+    {
+      "test_case_number": 15,
+      "description": "2. Fill out the registration form with valid information (name, email, password)."
+    },
+    {
+      "test_case_number": 16,
+      "description": "3. Agree to the terms and conditions."
+    },
+    {
+      "test_case_number": 17,
+      "description": "4. Click on the \"Create account\" button."
+    },
+    {
+      "test_case_number": 18,
+      "description": "- **Expected Result:** User receives a confirmation message, and the account is created successfully."
+    },
+    {
+      "test_case_number": 19,
+      "description": "### Test Case 2: Product Search Functionality"
+    },
+    {
+      "test_case_number": 20,
+      "description": "**Objective:** Ensure that users can search for products using the search bar."
+    },
+    {
+      "test_case_number": 21,
+      "description": "- **Preconditions:** User is logged into their account."
+    },
+    {
+      "test_case_number": 22,
+      "description": "- **Steps:**"
+    },
+    {
+      "test_case_number": 23,
+      "description": "1. Enter a product name (e.g., \"laptop\") into the search bar."
+    },
+    {
+      "test_case_number": 24,
+      "description": "2. Click on the search icon or press Enter."
+    },
+    {
+      "test_case_number": 25,
+      "description": "- **Expected Result:** The search results page displays relevant products related to the search term."
+    },
+    {
+      "test_case_number": 26,
+      "description": "### Test Case 3: Product Listing Creation"
+    },
+    {
+      "test_case_number": 27,
+      "description": "**Objective:** Verify that a registered user can successfully list a product for sale."
+    },
+    {
+      "test_case_number": 28,
+      "description": "- **Preconditions:** User is logged into their account."
+    },
+    {
+      "test_case_number": 29,
+      "description": "- **Steps:**"
+    },
+    {
+      "test_case_number": 30,
+      "description": "1. Click on the \"Sell\" link."
+    },
+    {
+      "test_case_number": 31,
+      "description": "2. Fill out the product listing form (title, description, price, category)."
+    },
+    {
+      "test_case_number": 32,
+      "description": "3. Upload product images."
+    },
+    {
+      "test_case_number": 33,
+      "description": "4. Click on the \"List item\" button."
+    },
+    {
+      "test_case_number": 34,
+      "description": "- **Expected Result:** User receives a confirmation message that the product has been listed successfully."
+    },
+    {
+      "test_case_number": 35,
+      "description": "### Test Case 4: Add Product to Cart"
+    },
+    {
+      "test_case_number": 36,
+      "description": "**Objective:** Ensure that users can add a product to their shopping cart."
+    },
+    {
+      "test_case_number": 37,
+      "description": "- **Preconditions:** User is logged into their account and on a product detail page."
+    },
+    {
+      "test_case_number": 38,
+      "description": "- **Steps:**"
+    },
+    {
+      "test_case_number": 39,
+      "description": "1. Click on the \"Add to cart\" button for the selected product."
+    },
+    {
+      "test_case_number": 40,
+      "description": "- **Expected Result:** The product is added to the shopping cart, and the cart icon updates to reflect the new item count."
+    },
+    {
+      "test_case_number": 41,
+      "description": "### Test Case 5: Checkout Process"
+    },
+    {
+      "test_case_number": 42,
+      "description": "**Objective:** Verify that users can complete the checkout process successfully."
+    },
+    {
+      "test_case_number": 43,
+      "description": "- **Preconditions:** User has products in their shopping cart."
+    },
+    {
+      "test_case_number": 44,
+      "description": "- **Steps:**"
+    },
+    {
+      "test_case_number": 45,
+      "description": "1. Click on the shopping cart icon."
+    },
+    {
+      "test_case_number": 46,
+      "description": "2. Click on the \"Proceed to checkout\" button."
+    },
+    {
+      "test_case_number": 47,
+      "description": "3. Enter shipping address and select shipping options."
+    },
+    {
+      "test_case_number": 48,
+      "description": "4. Enter payment information and click on the \"Confirm and pay\" button."
+    },
+    {
+      "test_case_number": 49,
+      "description": "- **Expected Result:** User receives an order confirmation message, and the order is processed successfully."
+    },
+    {
+      "test_case_number": 50,
+      "description": "### Test Case 6: User Login"
+    },
+    {
+      "test_case_number": 51,
+      "description": "**Objective:** Ensure that users can log in to their accounts successfully."
+    },
+    {
+      "test_case_number": 52,
+      "description": "- **Preconditions:** User has a registered account."
+    },
+    {
+      "test_case_number": 53,
+      "description": "- **Steps:**"
+    },
+    {
+      "test_case_number": 54,
+      "description": "1. Click on the \"Sign in\" link."
+    },
+    {
+      "test_case_number": 55,
+      "description": "2. Enter valid email and password."
+    },
+    {
+      "test_case_number": 56,
+      "description": "3. Click on the \"Sign in\" button."
+    },
+    {
+      "test_case_number": 57,
+      "description": "- **Expected Result:** User is redirected to their account dashboard, and their account information is displayed."
+    },
+    {
+      "test_case_number": 58,
+      "description": "## Conclusion"
+    },
+    {
+      "test_case_number": 59,
+      "description": "This test plan serves as a guideline for testing the core functionalities of the eBay website. Each test case is designed to validate specific features, ensuring that users have a reliable and efficient experience when using the platform."
+    }
+  ]
+}

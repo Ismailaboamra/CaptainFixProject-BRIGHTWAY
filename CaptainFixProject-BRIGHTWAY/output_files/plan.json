@@ -1,0 +1,306 @@
+[
+  {
+    "id": "TC-001",
+    "description": "Here are 10 QA test cases for the eBay website:"
+  },
+  {
+    "id": "TC-002",
+    "description": "### Test Case 1: Homepage Load"
+  },
+  {
+    "id": "TC-003",
+    "description": "**Objective:** Verify that the eBay homepage loads successfully."
+  },
+  {
+    "id": "TC-004",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-005",
+    "description": "1. Navigate to https://www.ebay.com/."
+  },
+  {
+    "id": "TC-006",
+    "description": "**Expected Result:** The homepage should load within 3 seconds without any errors."
+  },
+  {
+    "id": "TC-007",
+    "description": "---"
+  },
+  {
+    "id": "TC-008",
+    "description": "### Test Case 2: Search Functionality"
+  },
+  {
+    "id": "TC-009",
+    "description": "**Objective:** Validate the search functionality for a specific item."
+  },
+  {
+    "id": "TC-010",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-011",
+    "description": "1. Enter \"laptop\" in the search bar."
+  },
+  {
+    "id": "TC-012",
+    "description": "2. Click on the search button."
+  },
+  {
+    "id": "TC-013",
+    "description": "**Expected Result:** Search results for \"laptop\" should be displayed, showing relevant listings."
+  },
+  {
+    "id": "TC-014",
+    "description": "---"
+  },
+  {
+    "id": "TC-015",
+    "description": "### Test Case 3: Filter Search Results"
+  },
+  {
+    "id": "TC-016",
+    "description": "**Objective:** Ensure that filters can be applied to the search results."
+  },
+  {
+    "id": "TC-017",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-018",
+    "description": "1. Perform a search for \"laptop\"."
+  },
+  {
+    "id": "TC-019",
+    "description": "2. Apply filters for \"Brand\" and \"Price\"."
+  },
+  {
+    "id": "TC-020",
+    "description": "**Expected Result:** The search results should update to reflect the applied filters."
+  },
+  {
+    "id": "TC-021",
+    "description": "---"
+  },
+  {
+    "id": "TC-022",
+    "description": "### Test Case 4: Item Listing Details"
+  },
+  {
+    "id": "TC-023",
+    "description": "**Objective:** Verify that clicking on an item displays the correct details."
+  },
+  {
+    "id": "TC-024",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-025",
+    "description": "1. Perform a search for \"laptop\"."
+  },
+  {
+    "id": "TC-026",
+    "description": "2. Click on the first item in the search results."
+  },
+  {
+    "id": "TC-027",
+    "description": "**Expected Result:** The item details page should display the correct title, price, and description of the selected item."
+  },
+  {
+    "id": "TC-028",
+    "description": "---"
+  },
+  {
+    "id": "TC-029",
+    "description": "### Test Case 5: Add Item to Cart"
+  },
+  {
+    "id": "TC-030",
+    "description": "**Objective:** Test the functionality of adding an item to the shopping cart."
+  },
+  {
+    "id": "TC-031",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-032",
+    "description": "1. Search for \"laptop\"."
+  },
+  {
+    "id": "TC-033",
+    "description": "2. Click on an item."
+  },
+  {
+    "id": "TC-034",
+    "description": "3. Click on the \"Add to cart\" button."
+  },
+  {
+    "id": "TC-035",
+    "description": "**Expected Result:** The item should be successfully added to the cart, and a confirmation message should be displayed."
+  },
+  {
+    "id": "TC-036",
+    "description": "---"
+  },
+  {
+    "id": "TC-037",
+    "description": "### Test Case 6: View Shopping Cart"
+  },
+  {
+    "id": "TC-038",
+    "description": "**Objective:** Verify that the shopping cart displays the correct items."
+  },
+  {
+    "id": "TC-039",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-040",
+    "description": "1. Add an item to the cart."
+  },
+  {
+    "id": "TC-041",
+    "description": "2. Click on the cart icon."
+  },
+  {
+    "id": "TC-042",
+    "description": "**Expected Result:** The shopping cart should display the added item with the correct title, price, and quantity."
+  },
+  {
+    "id": "TC-043",
+    "description": "---"
+  },
+  {
+    "id": "TC-044",
+    "description": "### Test Case 7: User Login"
+  },
+  {
+    "id": "TC-045",
+    "description": "**Objective:** Validate the user login functionality."
+  },
+  {
+    "id": "TC-046",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-047",
+    "description": "1. Click on the \"Sign in\" button."
+  },
+  {
+    "id": "TC-048",
+    "description": "2. Enter valid credentials (username and password)."
+  },
+  {
+    "id": "TC-049",
+    "description": "3. Click on the \"Sign in\" button."
+  },
+  {
+    "id": "TC-050",
+    "description": "**Expected Result:** The user should be logged in successfully and redirected to their account page."
+  },
+  {
+    "id": "TC-051",
+    "description": "---"
+  },
+  {
+    "id": "TC-052",
+    "description": "### Test Case 8: User Registration"
+  },
+  {
+    "id": "TC-053",
+    "description": "**Objective:** Test the user registration process."
+  },
+  {
+    "id": "TC-054",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-055",
+    "description": "1. Click on the \"Register\" button."
+  },
+  {
+    "id": "TC-056",
+    "description": "2. Fill in the required fields (name, email, password, etc.)."
+  },
+  {
+    "id": "TC-057",
+    "description": "3. Submit the registration form."
+  },
+  {
+    "id": "TC-058",
+    "description": "**Expected Result:** The user should be registered successfully and receive a confirmation email."
+  },
+  {
+    "id": "TC-059",
+    "description": "---"
+  },
+  {
+    "id": "TC-060",
+    "description": "### Test Case 9: Password Recovery"
+  },
+  {
+    "id": "TC-061",
+    "description": "**Objective:** Verify the password recovery functionality."
+  },
+  {
+    "id": "TC-062",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-063",
+    "description": "1. Click on the \"Forgot password?\" link on the login page."
+  },
+  {
+    "id": "TC-064",
+    "description": "2. Enter the registered email address."
+  },
+  {
+    "id": "TC-065",
+    "description": "3. Submit the form."
+  },
+  {
+    "id": "TC-066",
+    "description": "**Expected Result:** A password reset email should be sent to the provided email address."
+  },
+  {
+    "id": "TC-067",
+    "description": "---"
+  },
+  {
+    "id": "TC-068",
+    "description": "### Test Case 10: Logout Functionality"
+  },
+  {
+    "id": "TC-069",
+    "description": "**Objective:** Ensure that the logout process works correctly."
+  },
+  {
+    "id": "TC-070",
+    "description": "**Steps:**"
+  },
+  {
+    "id": "TC-071",
+    "description": "1. Log in to the eBay account."
+  },
+  {
+    "id": "TC-072",
+    "description": "2. Click on the user profile icon."
+  },
+  {
+    "id": "TC-073",
+    "description": "3. Select the \"Logout\" option."
+  },
+  {
+    "id": "TC-074",
+    "description": "**Expected Result:** The user should be logged out and redirected to the homepage."
+  },
+  {
+    "id": "TC-075",
+    "description": "---"
+  },
+  {
+    "id": "TC-076",
+    "description": "These test cases cover essential functionalities of the eBay website, ensuring a basic level of quality assurance."
+  }
+]

@@ -4,11 +4,11 @@ from flask import (
     Flask, render_template, request, redirect,
     url_for, flash, session, send_file, abort
 )
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from planner import run_planner
 from database import db, User, Result
+from testPlan import process_target_data
+from planner import run_planner
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
@@ -28,13 +28,13 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         if User.query.filter_by(email=email).first():
-            flash("Email already registered", "danger")
+            flash("⚠️ Email already registered", "danger")
         else:
             new_user = User(email=email,
-                            password=generate_password_hash(password))
+                            password=generate_password_hash(password, method="pbkdf2:sha256", salt_length=16))
             db.session.add(new_user)
             db.session.commit()
-            flash("Registration successful, please login.", "success")
+            flash("✅ Registration successful, please login.", "success")
             return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -47,16 +47,16 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
-            flash("Logged in successfully", "success")
+            flash("✅ Logged in successfully", "success")
             return redirect(url_for('index'))
-        flash("Invalid credentials", "danger")
+        flash("⚠️ Invalid credentials", "danger")
     return render_template('login.html')
 
 
 @app.route('/logout')
 def logout():
     session.clear()
-    flash("Logged out", "info")
+    flash("ℹ️ Logged out", "info")
     return redirect(url_for('login'))
 
 # -----------------------------
@@ -72,29 +72,42 @@ def index():
 @app.route('/submit', methods=['POST'])
 def submit():
     if 'user_id' not in session:
-        flash("You must login first", "danger")
+        flash("⚠️ You must login first", "danger")
         return redirect(url_for('login'))
 
     target = request.form.get('target')
     depth = request.form.get('depth', 1)
     num_cases = request.form.get('num_cases', 5)
-    pm_tool = request.form.get('pm_tool')  # Jira / Trello / None
+    pm_tool = request.form.get('pm_tool')
 
     user = db.session.get(User, session['user_id'])
     email = user.email
 
+    # Basic validation
+    errors = []
     if not target:
-        flash("⚠️ Please provide a target URL", 'danger')
+        errors.append("⚠️ Please provide a target URL")
+    if not email:
+        errors.append("⚠️ Please provide an email address")
+
+    try:
+        depth = int(depth)
+        num_cases = int(num_cases)
+    except ValueError:
+        errors.append("⚠️ Depth and number of cases must be integers")
+
+    if errors:
+        for e in errors:
+            flash(e, 'danger')
         return redirect(url_for('index'))
 
     try:
+        # تشغيل process_target_data
+        process_target_data(target)
+
         # تشغيل planner
         file_paths = run_planner(
-            target,
-            depth=int(depth),
-            num_tests=int(num_cases),
-            email=email,
-            pm=pm_tool
+            target, depth=depth, num_tests=num_cases, email=email, pm=pm_tool
         )
     except Exception as e:
         flash(f"❌ Error generating test plan: {str(e)}", "danger")
@@ -118,7 +131,7 @@ def submit():
 @app.route('/history')
 def history():
     if 'user_id' not in session:
-        flash("You must login first", "danger")
+        flash("⚠️ You must login first", "danger")
         return redirect(url_for('login'))
 
     user = db.session.get(User, session['user_id'])
@@ -132,6 +145,10 @@ def download_file(result_id, file_type):
     result = db.session.get(Result, result_id)
     if not result:
         abort(404)
+
+    # تأكد إن النتيجة للمستخدم الحالي
+    if result.user_id != session.get('user_id'):
+        abort(403)
 
     if file_type == 'json':
         path = result.json_path
