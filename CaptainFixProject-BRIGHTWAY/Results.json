@@ -1,66 +1,36 @@
 [
   {
-    "id": "SMK-01",
+    "id": "SMK-1",
     "status": "Pass",
     "error": null,
     "screenshot": null
   },
   {
-    "id": "NAV-01",
+    "id": "SMK-2",
     "status": "Pass",
     "error": null,
     "screenshot": null
   },
   {
-    "id": "NAV-02",
+    "id": "NAV-1",
     "status": "Pass",
     "error": null,
     "screenshot": null
   },
   {
-    "id": "NAV-03",
+    "id": "NAV-2",
     "status": "Pass",
     "error": null,
     "screenshot": null
   },
   {
-    "id": "NAV-04",
+    "id": "FRM-1",
     "status": "Pass",
     "error": null,
     "screenshot": null
   },
   {
-    "id": "NAV-05",
-    "status": "Pass",
-    "error": null,
-    "screenshot": null
-  },
-  {
-    "id": "NAV-06",
-    "status": "Pass",
-    "error": null,
-    "screenshot": null
-  },
-  {
-    "id": "NAV-07",
-    "status": "Pass",
-    "error": null,
-    "screenshot": null
-  },
-  {
-    "id": "NAV-08",
-    "status": "Pass",
-    "error": null,
-    "screenshot": null
-  },
-  {
-    "id": "NAV-09",
-    "status": "Pass",
-    "error": null,
-    "screenshot": null
-  },
-  {
-    "id": "NAV-10",
+    "id": "FRM-2",
     "status": "Pass",
     "error": null,
     "screenshot": null

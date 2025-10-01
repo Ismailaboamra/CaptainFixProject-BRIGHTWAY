@@ -12,6 +12,7 @@ from typing import List
 from langchain_community.chat_models import ChatOpenAI
 
 from langchain_openai import ChatOpenAI
+from jira_utils import create_jira_issue, attach_file_to_issue
 
 from langchain.prompts import ChatPromptTemplate
 from testPlan import process_target_data
@@ -203,35 +204,37 @@ import os
 import requests
 from urllib.parse import urlparse, unquote
 
-def run_planner(target: str, num_tests: int = 5, depth: int = 1, email: str = "", pm: str = "jira"):
+def run_planner(target: str, num_tests: int = 5, depth: int = 1, email: str = "", pm: str = "jira", project_key: str = None):
     process_target_data(target)
 
+    # -----------------------------
+    # URL Validation
+    # -----------------------------
     parsed = urlparse(target)
     if parsed.scheme == "file":
-        # Decode URL-encoded characters and fix Windows path
         local_path = unquote(parsed.path)
         if os.name == "nt" and local_path.startswith("/"):
-            local_path = local_path[1:]  # Remove leading slash on Windows
-
+            local_path = local_path[1:]
         if not os.path.exists(local_path):
             print(f"❌ Local file not accessible: {local_path}")
             return
         print(f"📄 Local file validated: {local_path}")
     elif parsed.scheme in ("http", "https"):
         try:
-            headers = {
-                "User-Agent": "Mozilla/5.0"
-            }
+            headers = {"User-Agent": "Mozilla/5.0"}
             resp = requests.get(target, headers=headers, timeout=10)
             resp.raise_for_status()
             print(f"🌐 Website validated: {target}")
         except Exception as e:
             print(f"❌ Site not accessible: {e}")
-            return{}
+            return
     else:
         print(f"⚠️ Unsupported URL scheme: {parsed.scheme}")
-        return{}
+        return
 
+    # -----------------------------
+    # Generate test plan
+    # -----------------------------
     links = sample_links(target, num_tests=num_tests, depth=depth)
     plan = generate_testplan(target, links)
     save_testplan(plan)
@@ -239,10 +242,36 @@ def run_planner(target: str, num_tests: int = 5, depth: int = 1, email: str = ""
     excel_path = "./output/Plan.xlsx"
 
     print(f"✅ Test Plan generated successfully for {target}!")
+
+    # -----------------------------
+    # Send Email
+    # -----------------------------
     if email:
         send_results_email(email, attachments=[json_path, excel_path])
+        print(f"📧 Results sent to: {email}")
 
-        print(f"📧 Results will be sent to: {email}")
     print(f"📋 Project Management tool selected: {pm}")
 
-    return {"json": json_path, "excel": excel_path}
+    # -----------------------------
+    # Jira Integration
+    # -----------------------------
+    project_key = os.getenv("JIRA_PROJECT_KEY")
+    jira_issue_key = None
+    if pm.lower() == "jira" and project_key:
+        summary = f"Test Plan Generated for {target}"
+        description = (
+            f"Test Plan has been generated automatically.\n\n"
+            f"- JSON file: {json_path}\n"
+            f"- Excel file: {excel_path}\n\n"
+            f"Please review and assign test execution as needed."
+        )
+        issue = create_jira_issue(summary, description, project_key=project_key)
+        if issue:
+            jira_issue_key = issue.get("key")
+            print(f"✅ Jira issue created: {jira_issue_key}")
+            attach_file_to_issue(jira_issue_key, json_path)
+            attach_file_to_issue(jira_issue_key, excel_path)
+    else:
+        print("⚠️ Jira integration skipped (PM tool not Jira or project_key missing).")
+
+    return {"json": json_path, "excel": excel_path, "jira_issue": jira_issue_key}
