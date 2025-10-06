@@ -9,6 +9,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database import db, User, Result
 from testPlan import process_target_data
 from planner import run_planner
+import subprocess
+import sys
 
 
 
@@ -124,6 +126,13 @@ def submit():
     db.session.commit()
 
     flash("✅ Test Plan generated and saved successfully.", "success")
+    try:
+        # Run executor.py as a separate process
+        subprocess.run([sys.executable, "test_plan_runner_pm.py"], check=True)
+        flash("✅ Executor ran successfully.", "success")
+    except subprocess.CalledProcessError as e:
+        flash(f"⚠️ Error running executor: {e}", "danger")
+
     return redirect(url_for('index'))
 
 

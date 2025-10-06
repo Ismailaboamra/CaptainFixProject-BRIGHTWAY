@@ -1,17 +1,5 @@
 [
   {
-    "id": "SMK-1",
-    "status": "Pass",
-    "error": null,
-    "screenshot": null
-  },
-  {
-    "id": "SMK-2",
-    "status": "Pass",
-    "error": null,
-    "screenshot": null
-  },
-  {
     "id": "NAV-1",
     "status": "Pass",
     "error": null,
@@ -24,13 +12,13 @@
     "screenshot": null
   },
   {
-    "id": "FRM-1",
+    "id": "NAV-3",
     "status": "Pass",
     "error": null,
     "screenshot": null
   },
   {
-    "id": "FRM-2",
+    "id": "FORM-1",
     "status": "Pass",
     "error": null,
     "screenshot": null
